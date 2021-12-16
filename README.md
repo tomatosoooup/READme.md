@@ -11,8 +11,8 @@
 Last updates:
 
 Added dict() of users to test and new functions(def):
-def openfile
-def addUser
-def readFile
+- def openfile
+- def addUser
+- def readFile
 
 Now we can save our users in a .csv file and add new one.
