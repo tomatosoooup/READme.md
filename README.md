@@ -9,7 +9,7 @@
 <img width="424" alt="pic" src="https://user-images.githubusercontent.com/94603459/142417063-c0bca196-f3c7-4e00-8d75-6c4959b2c265.PNG">
 
 #Vasyl
-Last updates:
+- Last updates:
 
 Added dict() of users to test and new functions(def):
 - def openfile
