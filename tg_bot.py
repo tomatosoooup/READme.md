@@ -2,6 +2,7 @@ import logging
 import random
 import requests
 import csv
+import json 
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
@@ -19,7 +20,22 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleW
 r = requests.get(url,headers=headers)
 jsn = r.json()
 
-print(jsn)
+FILENAME = 'test.json'
+with open(FILENAME,'w') as file:
+    file.write(json.dumps(jsn,indent= 3))
+
+def get_content():
+    info = []
+    with open(FILENAME,'r') as file:
+        data = json.load(file)
+        print(data)
+
+    for i in data:
+        info.append(i)
+        print(info)
+    return info
+
+get_content()
 
 FILENAME = "users.csv"
 users = [
@@ -28,9 +44,11 @@ users = [
     {"name":"Mave", "Age": 19},
     {"name":"Olha", "Age": 22}
 ]
-
+placesToGo = [
+    {"place":"MacDonalds", "adress": "https://objor.com/15522-makdonalds.html"}
+]
 places = [
-    ["https://objor.com/15522-makdonalds.html","https://www.tripadvisor.ru/Restaurant_Review-g295369-d11671887-Reviews-Nikas_Restaurant-Kharkiv_Kharkiv_Oblast.html","https://saycheese.com.ua/biani-champagneria-v-harkove/","https://ru.restaurantguru.com/KFC-Kinnii-rinok-Kharkiv"],
+    ["https://www.tripadvisor.ru/Restaurant_Review-g295369-d11671887-Reviews-Nikas_Restaurant-Kharkiv_Kharkiv_Oblast.html","https://saycheese.com.ua/biani-champagneria-v-harkove/","https://ru.restaurantguru.com/KFC-Kinnii-rinok-Kharkiv"],
     ["https://zoo.kharkov.ua/","https://mykharkov.info/catalog/park-im-shevchenko.html","https://centralpark.kh.ua/ua/attrakcziony/","https://izvestia.kharkov.ua/obshchestvo/fjentezi-park-v-harkove-kogda-skazka-ozhivaet-fotoreportazh/"],
     ["https://www.svadba.kharkov.ua/cat-16-blagoveshhenskij-kafedralnyj-sobor/","http://hatob.com.ua/rus/","https://mykharkov.info/news/top-5-starinnyh-osobnyakov-v-cherte-harkova-13856.html","https://kh.vgorode.ua/reference/muzey/36487-kharkovskyi-ystorycheskyi-muzei"],
     ["https://kharkov.internet-bilet.ua/ru/events-rubric/8/circus","https://ua-paintball.com/paintball?gclid=EAIaIQobChMI-bKK-fyP9AIVwqfVCh1jGACxEAAYASAAEgLkbPD_BwE","https://www.instagram.com/malina_club_kharkov/?hl=ru","https://south-parka.net/"],
@@ -118,15 +136,23 @@ def readFile(FILENAME):
         for row in reader:
             print(row["name"], " - ", row["Age"])
 
+def addPlace():
+    with open("places.csv","w", newline= "")as file:
+        columns = ["place", "adress"]
+        writer = csv.DictWriter(file,fieldnames=columns)
+        writer.writeheader()
+        writer.writerows(placesToGo)
+
+
 def main() -> None:
     """Run the bot."""
     # Create the Updater and pass it your bot's token.
     updater = Updater("2036383413:AAG8wRnkkOlAdDHC-8n9kNVx-UxOJSgaZ_8")
-
-    updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(buttonChoose))
-    updater.dispatcher.add_handler(CommandHandler('help', help_command))
-    updater.dispatcher.add_handler(CallbackQueryHandler('achieve', complete_achievement))
+    do = updater.dispatcher.add_handler
+    do(CommandHandler('start', start))
+    do(CallbackQueryHandler(buttonChoose))
+    do(CommandHandler('help', help_command))
+    do(CallbackQueryHandler('achieve', complete_achievement))
 
 
 if __name__ == '__main__':
