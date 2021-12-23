@@ -54,6 +54,9 @@ places = [
     ["https://kharkov.internet-bilet.ua/ru/events-rubric/8/circus","https://ua-paintball.com/paintball?gclid=EAIaIQobChMI-bKK-fyP9AIVwqfVCh1jGACxEAAYASAAEgLkbPD_BwE","https://www.instagram.com/malina_club_kharkov/?hl=ru","https://south-parka.net/"],
 ]
 
+def help_me(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text("/start - Начало работы с ботом")
+
 def start(update: Update, context: CallbackContext) -> None:
     """Sends a message with three inline buttons attached."""
     keyboard = [
@@ -100,10 +103,9 @@ def buttonChoose(update: Update, context: CallbackContext) -> None:
         query.string_out = 'Bot doesn`t know what to do'
 
 
-
-def help_command(update: Update, context: CallbackContext) -> None:
-    """Displays info on how to use the bot."""
-    update.message.reply_text("Use /start to test this bot.")
+# def help_command(update: Update, context: CallbackContext) -> None:
+#     """Displays info on how to use the bot."""
+#     update.message.reply_text("Use /start to test this bot.")
 
 def complete_achievement(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -151,12 +153,13 @@ def main() -> None:
     do = updater.dispatcher.add_handler
     do(CommandHandler('start', start))
     do(CallbackQueryHandler(buttonChoose))
-    do(CommandHandler('help', help_command))
+    do(CommandHandler('help', help_me))
     do(CallbackQueryHandler('achieve', complete_achievement))
 
 
 if __name__ == '__main__':
     main()
+
 
 
     # Start the Bot
