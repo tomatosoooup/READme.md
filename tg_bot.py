@@ -1,170 +1,234 @@
-import logging
+import telebot
+import subForPy
 import random
-import requests
-import csv
-import json 
+# import logging
+
+from telebot import types
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
-)
-logger = logging.getLogger(__name__)
-
-logger = logging.getLogger(__name__)
-
-url = 'https://innovations.kh.ua/ucan/wp-json/wp/v2/place/'
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-
-r = requests.get(url,headers=headers)
-jsn = r.json()
-
-FILENAME = 'test.json'
-with open(FILENAME,'w') as file:
-    file.write(json.dumps(jsn,indent= 3))
-
-def get_content():
-    info = []
-    with open(FILENAME,'r') as file:
-        data = json.load(file)
-        print(data)
-
-    for i in data:
-        info.append(i)
-        print(info)
-    return info
-
-get_content()
-
-FILENAME = "users.csv"
-users = [
-    {"name":"Tom", "Age": 18},
-    {"name":"Dave", "Age": 23},
-    {"name":"Mave", "Age": 19},
-    {"name":"Olha", "Age": 22}
-]
-placesToGo = [
-    {"place":"MacDonalds", "adress": "https://objor.com/15522-makdonalds.html"}
-]
+bot = telebot.TeleBot(subForPy.TOKEN)
+#----------------Переменные-для-юзера-----------------
+name = 'Tom'
+surname = 'Bouble'
+age = 0
+points = 100
+#--------------------Путь-к-фото----------------------
+FILEWAY = 'D:\python\works\static\hello.webp'
+FILEWAY2 = 'D:\python\works\static\photo_kh.jpg_large'
+#----------------Пользователи-и-места-----------------
 places = [
-    ["https://www.tripadvisor.ru/Restaurant_Review-g295369-d11671887-Reviews-Nikas_Restaurant-Kharkiv_Kharkiv_Oblast.html","https://saycheese.com.ua/biani-champagneria-v-harkove/","https://ru.restaurantguru.com/KFC-Kinnii-rinok-Kharkiv"],
-    ["https://zoo.kharkov.ua/","https://mykharkov.info/catalog/park-im-shevchenko.html","https://centralpark.kh.ua/ua/attrakcziony/","https://izvestia.kharkov.ua/obshchestvo/fjentezi-park-v-harkove-kogda-skazka-ozhivaet-fotoreportazh/"],
-    ["https://www.svadba.kharkov.ua/cat-16-blagoveshhenskij-kafedralnyj-sobor/","http://hatob.com.ua/rus/","https://mykharkov.info/news/top-5-starinnyh-osobnyakov-v-cherte-harkova-13856.html","https://kh.vgorode.ua/reference/muzey/36487-kharkovskyi-ystorycheskyi-muzei"],
-    ["https://kharkov.internet-bilet.ua/ru/events-rubric/8/circus","https://ua-paintball.com/paintball?gclid=EAIaIQobChMI-bKK-fyP9AIVwqfVCh1jGACxEAAYASAAEgLkbPD_BwE","https://www.instagram.com/malina_club_kharkov/?hl=ru","https://south-parka.net/"],
+    'http://bowling.mall.com.ua/',
+    'https://icehall.com.ua/,',
+    'http://www.izolyatsiya.com.ua/number-1408/'
 ]
 
-def help_me(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text("/start - Начало работы с ботом")
+places2 = [
+    'https://centralpark.kh.ua/ua/',
+    'https://zoo.kharkov.ua/',
+    'https://feldman-ecopark.com/uk/'
+]
+places3 = [
+    'http://myasoedov.com.ua/',
+    'https://gdeburger.com/',
+    'https://eatery.kh.ua/'
+]
+places4 = [
+    'http://morskoimuzei.kh.ua/',
+    'http://museum.kh.ua/',
+    'https://artmuseum.kh.ua/'
+]
 
-def start(update: Update, context: CallbackContext) -> None:
-    """Sends a message with three inline buttons attached."""
-    keyboard = [
-        [InlineKeyboardButton("Развлечения", callback_data='1'),InlineKeyboardButton("Отдых", callback_data='2'),InlineKeyboardButton("Еда", callback_data='3'),InlineKeyboardButton("Культурное наследие", callback_data='4')],]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text('Выберите категорию:', reply_markup=reply_markup)
+our_users = [
+    {
+        'user':
+        {
+            'name': name,
+            'surname': surname,
+            'age': age
+        }
+    }
+]
+#---------------------Работа-бота---------------------
+@bot.message_handler(commands=['start'])
+def welcome(message):
+    sti = open(FILEWAY, 'rb')
+    bot.send_sticker(message.chat.id, sti)
+
+    # keyboard
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    item1 = types.KeyboardButton('Выбрать челлендж')
+    item2 = types.KeyboardButton('Статистика')
+    item3 = types.KeyboardButton('Пожертвования')
+ 
+    markup.add(item1, item2, item3)
+
+    bot.send_message(message.chat.id, "Добро пожаловать, {0.first_name}!\nЯ - <b>{1.first_name}</b>, бот созданный чтобы разнообразить твою рутину. Перед началом используй команду /reg".format(message.from_user, bot.get_me()),
+        parse_mode='html', reply_markup=markup)
+
+@bot.message_handler(commands=['help'])
+def help_me(message):
+
+    bot.send_message(message.chat.id, "1. To start using bot type /start and press ENTER")
+    bot.send_message(message.chat.id, "2. Use /reg to create your profile")
+
+@bot.message_handler(commands=['reg'])
+def registration(message):
+
+        bot.send_message(message.from_user.id,'Я задам парочку вопросов! Как тебя зовут ?')
+        bot.register_next_step_handler(message,reg_name)
+
+def reg_name(message):
+    global name
+    name = message.text
+    name = name.lower()
+    name = name.capitalize()
+    bot.send_message(message.from_user.id,'Какая у тебя фамилия ?')
+    bot.register_next_step_handler(message,reg_surname)
+
+def reg_surname(message):
+    global surname
+    surname = message.text
+    surname = surname.lower()
+    surname = surname.capitalize()
+    bot.send_message(message.from_user.id,'Сколько тебе лет ?')
+    bot.register_next_step_handler(message,reg_age)
+
+def reg_age(message):
+    global age
+    age = message.text
+    
+    while age == 0:
+        try:
+            age = int(message.text)
+        except Exception:
+            bot.send_message(message.from_user.id,'Введи цифрами!')
+    bot.send_message(message.from_user.id, 'Тебя зовут: ' + surname + ' '+ name + ' и тебе: '+ str(age) + ' лет')
+
+@bot.message_handler(content_types=['text'])
+def say(message):
+    # bot.send_message(message.chat.id,message.text)
+     if message.chat.type == 'private':
+        if message.text == 'Выбрать челлендж':
+            # bot.send_message(message.chat.id, "Nice! Let's try")
+
+            markup = types.InlineKeyboardMarkup(row_width=4)
+            item1 = types.InlineKeyboardButton('Развлечения', callback_data='1')
+            item2 = types.InlineKeyboardButton('Отдых', callback_data='2')
+            item3 = types.InlineKeyboardButton('Еда', callback_data='3')
+            item4 = types.InlineKeyboardButton('Культурное наследие', callback_data='4')
+            markup.add(item1, item2, item3, item4)
+
+            ph = open(FILEWAY2, 'rb')
+            bot.send_message(message.chat.id, 'Выберите категорию: ', bot.send_photo(message.chat.id, ph), reply_markup=markup)
+
+        elif message.text == 'Статистика':
+
+            bot.send_message(message.from_user.id, 'Имя: ' + str(name)  + '\n' + 'Фамилия: ' + str(surname) + '\n'
+            + 'Возраст: ' + str(age) + '\n' + 'Количество баллов:' + str(points))
+
+            # keyboard
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            item1 = types.KeyboardButton('Изменить данные')
+            item2 = types.KeyboardButton('Вернутся обратно')
+ 
+            markup.add(item1, item2)
+
+            bot.send_message(message.chat.id,'Всё ли верно ?', reply_markup=markup)
+ 
+        elif message.text == 'Пожертвования':
+            bot.send_message(message.chat.id,'Реквизиты:\n monobank: xxxxxxxxx\n privatbank: xxxxxxxxx')
+        elif message.text == 'Изменить данные': #не реализована
+            markup3 = types.InlineKeyboardMarkup(row_width=4)
+            item1 = types.InlineKeyboardButton('Имя', callback_data='8')
+            item2 = types.InlineKeyboardButton('Фамилия', callback_data='9')
+            item3 = types.InlineKeyboardButton('Возраст', callback_data='10')
+            markup3.add(item1, item2, item3)
+            bot.send_message(message.chat.id,'Что именно стоит поменять ?', reply_markup=markup3)
+
+        elif message.text == 'Вернутся обратно':
+            # keyboard
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            item1 = types.KeyboardButton('Выбрать челлендж')
+            item2 = types.KeyboardButton('Статистика')
+            item3 = types.KeyboardButton('Пожертвования')
+ 
+            markup.add(item1, item2, item3)
+
+            bot.send_message(message.chat.id,'Вы вернулись обратно!',reply_markup=markup)
+        else:
+            bot.send_message(message.chat.id, 'Я не знаю что ответить 😢')
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    item1 = types.KeyboardButton('Выбрать челлендж')
+    item2 = types.KeyboardButton('Статистика')
+    item3 = types.KeyboardButton('Пожертвования')
+ 
+    markup.add(item1, item2, item3)
+
+    markup2 = types.InlineKeyboardMarkup(row_width=4)
+    item4 = types.InlineKeyboardButton('Развлечения', callback_data='1')
+    item5 = types.InlineKeyboardButton('Отдых', callback_data='2')
+    item6 = types.InlineKeyboardButton('Еда', callback_data='3')
+    item7 = types.InlineKeyboardButton('Культурное наследие', callback_data='4')
+    markup2.add(item4, item5, item6, item7)
+
+    markup3 = types.InlineKeyboardMarkup(row_width=3)
+    item8 = types.InlineKeyboardButton("Принять", callback_data='5')
+    item9 = types.InlineKeyboardButton("Отказаться", callback_data='6')
+    item10 = types.InlineKeyboardButton("Вернутся обратно", callback_data='7')
+    markup3.add(item8, item9, item10)
+
+    try:
+        if call.message:
+            if call.data == '1':
+                bot.send_message(call.message.chat.id, random.choice(places), reply_markup=markup3)
+            elif call.data == '2':
+                bot.send_message(call.message.chat.id, random.choice(places2), reply_markup=markup3)
+            elif call.data == '3':
+                bot.send_message(call.message.chat.id, random.choice(places3), reply_markup=markup3)
+            elif call.data == '4':
+                bot.send_message(call.message.chat.id, random.choice(places4), reply_markup=markup3)
+            elif call.data == '5': #принять челлендж
+                bot.send_message(call.message.chat.id, 'Отлично! Задание будет помещено к вас в личный кабинет.')
+            elif call.data == '6': #отказаться
+                ph = open(FILEWAY2, 'rb')
+                bot.send_message(call.message.chat.id,'Ничего страшного, возможно стоит выбрать что-то другое.',bot.send_photo(call.message.chat.id, ph),reply_markup=markup2, )
+            elif call.data == '7': #вернуться обратно
+                bot.send_message(call.message.chat.id, 'Выберите категорию: ', reply_markup=markup2)
+            # elif call.data == '8': 
+            #     bot.send_message(call.message.chat.id, 'Введите имя: ')
+            #     name = call.message.text
+            #     bot.send_message(call.message.chat.id,'Имя было изменено!')
+            #     return name
+            # elif call.data == '9':
+            #     bot.send_message(call.message.chat.id, 'Выберите категорию: ', reply_markup=markup)
+            # elif call.data == '10':
+            #     bot.send_message(call.message.chat.id, 'Выберите категорию: ', reply_markup=markup)
+
+ 
+            # remove inline buttons
+            # bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Вот наше предложение. Ты согласен его выполнить ?",
+            #     reply_markup=None)
+            
+            # show alert
+            bot.answer_callback_query(callback_query_id=call.id, show_alert=False,  
+                text="Настало ваше время!")
+
+    except Exception as e:
+        print(repr(e))
+            
+    
+bot.polling(non_stop=True)
 
 
-def buttonChoose(update: Update, context: CallbackContext) -> None:
-    """Parses the CallbackQuery and updates the message text."""
-    query = update.callback_query
-
-    accept = [[InlineKeyboardButton("Принять", callback_data='11'),InlineKeyboardButton("Отказаться", callback_data='22'),InlineKeyboardButton("Вернутся", callback_data='33')],]
-    reply_markup_accept = InlineKeyboardMarkup(accept)
-
-
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    query.answer()
-    print(query.data)
-
-    if query.data == '1':
-        string = random.choice(places)
-        query.edit_message_text(text=string, reply_markup=reply_markup_accept)
-
-    elif query.data == '2':
-        string = random.choice(places)
-        query.edit_message_text(text=string, reply_markup=reply_markup_accept)
-        
-    elif query.data == '3':
-        string = random.choice(places)
-        #string = places[1]
-        query.edit_message_text(text=string, reply_markup=reply_markup_accept)
-
-    elif query.data == '4':
-        string = random.choice(places)
-        query.edit_message_text(text=string, reply_markup=reply_markup_accept)
-
-    # elif query.data == '11':
-        # task = 
-        #Записать в файл Id пользователя (получить по чатId), Id заведения, дату
-
-    else:
-        query.string_out = 'Bot doesn`t know what to do'
-
-
-# def help_command(update: Update, context: CallbackContext) -> None:
-#     """Displays info on how to use the bot."""
-#     update.message.reply_text("Use /start to test this bot.")
-
-def complete_achievement(update: Update, context: CallbackContext) -> None:
-    keyboard = [
-        [InlineKeyboardButton("Сдать задание", callback_data='1')],]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text('Отправьте нам фотографию:', reply_markup=reply_markup)
-
-# открытие файла для записи
-def openfile(FILENAME):
-    with open(FILENAME, "w", newline = "") as file:
-        columns = ["name","Age"]
-        writer = csv.DictWriter(file,fieldnames=columns)
-        writer.writeheader()
-        writer.writerows(users)
-
-# добавление пользователя
-def addUser(FILENAME):
-    columns = ["name","Age"]
-    name = input("Enter your name: ") 
-    age = input("Enter your age: ")
-    user = {"name":name, "Age": age}
-    with open(FILENAME, "a", newline = "") as file:
-        writer = csv.DictWriter(file,fieldnames=columns)
-        writer.writerow(user)
-
-# чтение из файла
-def readFile(FILENAME):
-    with open(FILENAME, "r", newline = "") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            print(row["name"], " - ", row["Age"])
-
-def addPlace():
-    with open("places.csv","w", newline= "")as file:
-        columns = ["place", "adress"]
-        writer = csv.DictWriter(file,fieldnames=columns)
-        writer.writeheader()
-        writer.writerows(placesToGo)
-
-
-def main() -> None:
-    """Run the bot."""
-    # Create the Updater and pass it your bot's token.
-    updater = Updater("2036383413:AAG8wRnkkOlAdDHC-8n9kNVx-UxOJSgaZ_8")
-    do = updater.dispatcher.add_handler
-    do(CommandHandler('start', start))
-    do(CallbackQueryHandler(buttonChoose))
-    do(CommandHandler('help', help_me))
-    do(CallbackQueryHandler('achieve', complete_achievement))
-
-
-if __name__ == '__main__':
-    main()
 
 
 
-    # Start the Bot
-    updater.start_polling()
 
-    # Run the bot until the user presses Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT
-    updater.idle()
+
+
