@@ -5,7 +5,9 @@
 #Vasyl -last commit
 [Bot](http://t.me/pyToTest_bot)
 - Bot was completely rewritten
+
 User can choose challenges, appect or reject them, see his info and make a donation.
+
 He knows such commands like:
 -/start
 -/help
