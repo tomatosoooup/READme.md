@@ -9,10 +9,12 @@
 User can choose challenges, appect or reject them, see his info and make a donation.
 
 He knows such commands like:
--/start
--/help
--/reg
 
+-/start
+
+-/help
+
+-/reg
 
 In future:
 -Bot will be able to change users name, surname, age if user ask for it. 
