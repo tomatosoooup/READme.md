@@ -6,6 +6,8 @@
 
 [Youtube](https://youtu.be/DIKqtZG3B2E)
 
+[Site](http://innovations.kh.ua/ucan/)
+
 - Bot was completely rewritten
 
 User can choose challenges, appect or reject them, see his info and make a donation.
