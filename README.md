@@ -22,7 +22,8 @@ This task was totally **done** :white_check_mark:
 
 **-/del** :wastebasket:
 
-<img width="402" alt="Пример" src="https://user-images.githubusercontent.com/94603459/147418560-16f621e1-a9fd-471a-b6a5-e2fc367610f2.PNG">\
+# Example:
+<img width="363" alt="example" src="https://user-images.githubusercontent.com/94603459/147751170-b3fbfbf2-1869-4c87-9b30-05f585f33b9d.PNG">
 
 # New:
 **1.** User can change information about him :curly_haired_man:
