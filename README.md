@@ -19,6 +19,7 @@ He knows such commands like:
 # New
 - Added new function /del
 - User can change information about him
+
 In future:
 Add more functional
 
