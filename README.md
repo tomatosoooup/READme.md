@@ -2,6 +2,8 @@
 # Ucan
 #Vasyl -last commit
 [Bot](http://t.me/pyToTest_bot)
+[Youtube](https://youtu.be/DIKqtZG3B2E)
+
 - Bot was completely rewritten
 
 User can choose challenges, appect or reject them, see his info and make a donation.
