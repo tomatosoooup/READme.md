@@ -4,11 +4,9 @@
 1. [Bot](http://t.me/pyToTest_bot)	:robot:
 
 
-2. [Youtube](https://youtu.be/DIKqtZG3B2E)
+2. [Youtube](https://youtu.be/DIKqtZG3B2E) :arrow_forward:
 
-3. [Site](http://innovations.kh.ua/ucan/)
-
-- Bot was completely rewritten
+3. [Site](http://innovations.kh.ua/ucan/) 	:man_technologist:
 
 User can choose challenges, appect or reject them, see his info and make a donation.
 
