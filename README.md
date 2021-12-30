@@ -18,8 +18,9 @@ He knows such commands like:
 
 # New
 - Added new function /del
+- User can change information about him
 In future:
--Bot will be able to change users name, surname, age if user ask for it. 
+Add more functional
 
 
 
