@@ -5,7 +5,7 @@ import random
 
 from telebot import types
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, replymarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
 bot = telebot.TeleBot(subForPy.TOKEN)
@@ -51,6 +51,37 @@ our_users = [
         }
     }
 ]
+
+# -------------------Все-панели-бота-------------------
+# 1. Панель выбора челленджей, статистики и доната
+markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+item1 = types.KeyboardButton('Choose challenge')
+item2 = types.KeyboardButton('Statistics')
+item3 = types.KeyboardButton('Donation')
+markup.add(item1, item2, item3)
+# 2. Панель выбора категорий заданий
+markup2 = types.InlineKeyboardMarkup(row_width=4)
+item4 = types.InlineKeyboardButton(
+    'Entertainment', callback_data='1')
+item5 = types.InlineKeyboardButton('Rest', callback_data='2')
+item6 = types.InlineKeyboardButton('Food', callback_data='3')
+item7 = types.InlineKeyboardButton(
+    'Culture', callback_data='4')
+markup2.add(item4, item5, item6, item7)
+# 3. Панель возврата или изменения информации
+markup3 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+item8 = types.KeyboardButton('Change information')
+item9 = types.KeyboardButton('Return')
+markup3.add(item8, item9)
+# 4. Панель принятия изменений информации об пользователе
+# Указана в коде, из-за проблем с областью видимости
+# 5. Панель принятия, отказа или возврата
+markup5 = types.InlineKeyboardMarkup(row_width=3)
+item12 = types.InlineKeyboardButton("Accept", callback_data='5')
+item13 = types.InlineKeyboardButton("Deny", callback_data='6')
+item14 = types.InlineKeyboardButton("Return", callback_data='7')
+markup5.add(item12, item13, item14)
+
 # ---------------------Работа-бота---------------------
 
 
@@ -60,21 +91,13 @@ def welcome(message):
     sti = open(FILEWAY, 'rb')
     bot.send_sticker(message.chat.id, sti)
 
-    # keyboard
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton('Выбрать челлендж')
-    item2 = types.KeyboardButton('Статистика')
-    item3 = types.KeyboardButton('Пожертвования')
-
-    markup.add(item1, item2, item3)
-
-    bot.send_message(message.chat.id, "Добро пожаловать, {0.first_name}!\nЯ - <b>{1.first_name}</b>, бот созданный чтобы разнообразить твою рутину. Перед началом используй команду /reg".format(message.from_user, bot.get_me()),
+    bot.send_message(message.chat.id, "Welcome, {0.first_name}!\nI am - <b>{1.first_name}</b>, bot, created to diversify your routine. Before starting use /reg command".format(message.from_user, bot.get_me()),
                      parse_mode='html', reply_markup=markup)
 
 
 @bot.message_handler(commands=['del'])
 def deleting(message):
-    bot.send_message(message.chat.id, 'Сколько удалить строк ?')
+    bot.send_message(message.chat.id, 'How many lines to delete ?')
     bot.register_next_step_handler(message, deleteMyMessage)
 
 
@@ -86,7 +109,7 @@ def deleteMyMessage(message):
         try:
             messagesToDelete = int(message.text)
         except Exception:
-            bot.send_message(message.from_user.id, 'Введи цифрами!')
+            bot.send_message(message.from_user.id, 'Enter numbers!')
 
     for id in range((message.message_id-int(messagesToDelete)), message.message_id):
         bot.delete_message(message.chat.id, id)
@@ -105,7 +128,7 @@ def help_me(message):
 def registration(message):
 
     bot.send_message(message.from_user.id,
-                     'Я задам парочку вопросов! Как тебя зовут ?')
+                     'I will give you a couple of questions! What is your name ?')
     bot.register_next_step_handler(message, reg_name)
 
 
@@ -114,7 +137,7 @@ def reg_name(message):
     name = message.text
     name = name.lower()
     name = name.capitalize()
-    bot.send_message(message.from_user.id, 'Какая у тебя фамилия ?')
+    bot.send_message(message.from_user.id, 'What is your surname ?')
     bot.register_next_step_handler(message, reg_surname)
 
 
@@ -123,7 +146,7 @@ def reg_surname(message):
     surname = message.text
     surname = surname.lower()
     surname = surname.capitalize()
-    bot.send_message(message.from_user.id, 'Сколько тебе лет ?')
+    bot.send_message(message.from_user.id, 'How old are you ?')
     bot.register_next_step_handler(message, reg_age)
 
 
@@ -135,148 +158,100 @@ def reg_age(message):
         try:
             age = int(message.text)
         except Exception:
-            bot.send_message(message.from_user.id, 'Введи цифрами!')
-    bot.send_message(message.from_user.id, 'Тебя зовут: ' +
-                     surname + ' ' + name + ' и тебе: ' + str(age) + ' лет')
+            bot.send_message(message.from_user.id, 'Enter numbers!')
+    bot.send_message(message.from_user.id, 'Your name: ' +
+                     surname + ' ' + name + ' and you are: ' + str(age) + ' y.o')
+
+    bot.send_message(message.chat.id, 'Well ! Information was added',
+                     reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
 def say(message):
-    # bot.send_message(message.chat.id,message.text)
+
+    markup4 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    item10 = types.KeyboardButton('Yes')
+    item11 = types.KeyboardButton('No')
+    markup4.add(item10, item11)
+
     if message.chat.type == 'private':
-        if message.text == 'Выбрать челлендж':
-            # bot.send_message(message.chat.id, "Nice! Let's try")
-
-            markup = types.InlineKeyboardMarkup(row_width=4)
-            item1 = types.InlineKeyboardButton(
-                'Развлечения', callback_data='1')
-            item2 = types.InlineKeyboardButton('Отдых', callback_data='2')
-            item3 = types.InlineKeyboardButton('Еда', callback_data='3')
-            item4 = types.InlineKeyboardButton(
-                'Культурное наследие', callback_data='4')
-            markup.add(item1, item2, item3, item4)
-
+        if message.text == 'Choose challenge':
             ph = open(FILEWAY2, 'rb')
-            bot.send_message(message.chat.id, 'Выберите категорию: ', bot.send_photo(
-                message.chat.id, ph), reply_markup=markup)
+            bot.send_message(message.chat.id, 'Choose cathegory: ', bot.send_photo(
+                message.chat.id, ph), reply_markup=markup2)
 
-        elif message.text == 'Статистика':
+        elif message.text == 'Statistics':
 
-            bot.send_message(message.from_user.id, 'Имя: ' + str(name) + '\n' + 'Фамилия: ' + str(surname) + '\n'
-                             + 'Возраст: ' + str(age) + '\n' + 'Количество баллов:' + str(points))
+            bot.send_message(message.from_user.id, 'Name: ' + str(name) + '\n' + 'Surname: ' + str(surname) + '\n'
+                             + 'Age: ' + str(age) + '\n' + 'Points:' + str(points))
 
-            # keyboard
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            item1 = types.KeyboardButton('Изменить данные')
-            item2 = types.KeyboardButton('Вернутся обратно')
+            bot.send_message(message.chat.id, 'Is everything right ?',
+                             reply_markup=markup3)
 
-            markup.add(item1, item2)
-
-            bot.send_message(message.chat.id, 'Всё ли верно ?',
-                             reply_markup=markup)
-
-        elif message.text == 'Пожертвования':
+        elif message.text == 'Donation':
             bot.send_message(
-                message.chat.id, 'Реквизиты:\n monobank: xxxxxxxxx\n privatbank: xxxxxxxxx')
-        elif message.text == 'Изменить данные':  # не реализована
-            markup3 = types.InlineKeyboardMarkup(row_width=4)
-            item1 = types.InlineKeyboardButton('Имя', callback_data='8')
-            item2 = types.InlineKeyboardButton('Фамилия', callback_data='9')
-            item3 = types.InlineKeyboardButton('Возраст', callback_data='10')
-            markup3.add(item1, item2, item3)
+                message.chat.id, 'Requisites:\n monobank: xxxxxxxxx\n privatbank: xxxxxxxxx')
+        elif message.text == 'Change information':
             bot.send_message(
-                message.chat.id, 'Что именно стоит поменять ?', reply_markup=markup3)
+                message.chat.id, 'Please choose Yes/No', reply_markup=markup4)
 
-        elif message.text == 'Вернутся обратно':
-            # keyboard
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            item1 = types.KeyboardButton('Выбрать челлендж')
-            item2 = types.KeyboardButton('Статистика')
-            item3 = types.KeyboardButton('Пожертвования')
-
-            markup.add(item1, item2, item3)
-
+        elif message.text == 'Return':
             bot.send_message(
-                message.chat.id, 'Вы вернулись обратно!', reply_markup=markup)
+                message.chat.id, 'You went back!', reply_markup=markup)
+        elif message.text == 'Yes':
+            bot.send_message(message.from_user.id,
+                             'What is your name ?')
+            bot.register_next_step_handler(message, reg_name)
+        elif message.text == 'No':
+            markup4 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            item11 = types.KeyboardButton('Change information')
+            item12 = types.KeyboardButton('Return')
+            markup4.add(item11, item12)
         else:
-            bot.send_message(message.chat.id, 'Я не знаю что ответить 😢')
+            bot.send_message(message.chat.id, "I don't know what to say 😢")
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
 
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton('Выбрать челлендж')
-    item2 = types.KeyboardButton('Статистика')
-    item3 = types.KeyboardButton('Пожертвования')
-
-    markup.add(item1, item2, item3)
-
-    markup2 = types.InlineKeyboardMarkup(row_width=4)
-    item4 = types.InlineKeyboardButton('Развлечения', callback_data='1')
-    item5 = types.InlineKeyboardButton('Отдых', callback_data='2')
-    item6 = types.InlineKeyboardButton('Еда', callback_data='3')
-    item7 = types.InlineKeyboardButton(
-        'Культурное наследие', callback_data='4')
-    markup2.add(item4, item5, item6, item7)
-
-    markup3 = types.InlineKeyboardMarkup(row_width=3)
-    item8 = types.InlineKeyboardButton("Принять", callback_data='5')
-    item9 = types.InlineKeyboardButton("Отказаться", callback_data='6')
-    item10 = types.InlineKeyboardButton("Вернутся обратно", callback_data='7')
-    markup3.add(item8, item9, item10)
-
     try:
         if call.message:
             if call.data == '1':
                 bot.send_message(call.message.chat.id, random.choice(
-                    places), reply_markup=markup3)
+                    places), reply_markup=markup5)
             elif call.data == '2':
                 bot.send_message(call.message.chat.id, random.choice(
-                    places2), reply_markup=markup3)
+                    places2), reply_markup=markup5)
             elif call.data == '3':
                 bot.send_message(call.message.chat.id, random.choice(
-                    places3), reply_markup=markup3)
+                    places3), reply_markup=markup5)
             elif call.data == '4':
                 bot.send_message(call.message.chat.id, random.choice(
-                    places4), reply_markup=markup3)
+                    places4), reply_markup=markup5)
             elif call.data == '5':  # принять челлендж
                 bot.send_message(
-                    call.message.chat.id, 'Отлично! Задание будет помещено к вас в личный кабинет.')
+                    call.message.chat.id, 'Well.This challenge will be added to your cabinet')
             elif call.data == '6':  # отказаться
                 ph = open(FILEWAY2, 'rb')
-                bot.send_message(call.message.chat.id, 'Ничего страшного, возможно стоит выбрать что-то другое.',
-                                 bot.send_photo(call.message.chat.id, ph), reply_markup=markup2, )
+                bot.send_message(call.message.chat.id, 'Sad :( Probably you can choose another one).',
+                                 bot.send_photo(call.message.chat.id, ph), reply_markup=markup2)
             elif call.data == '7':  # вернуться обратно
                 bot.send_message(call.message.chat.id,
-                                 'Выберите категорию: ', reply_markup=markup2)
-            # elif call.data == '8':
-            #     bot.send_message(call.message.chat.id, 'Введите имя: ')
-            #     name = call.message.text
-            #     bot.send_message(call.message.chat.id,'Имя было изменено!')
-            #     return name
-            # elif call.data == '9':
-            #     bot.send_message(call.message.chat.id, 'Выберите категорию: ', reply_markup=markup)
-            # elif call.data == '10':
-            #     bot.send_message(call.message.chat.id, 'Выберите категорию: ', reply_markup=markup)
+                                 'Choose cathegory: ', reply_markup=markup2)
 
             # remove inline buttons
             # bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Вот наше предложение. Ты согласен его выполнить ?",
             #     reply_markup=None)
 
             # show alert
-            bot.answer_callback_query(callback_query_id=call.id, show_alert=False,
-                                      text="Настало ваше время!")
+            # bot.answer_callback_query(callback_query_id=call.id, show_alert=False,
+            #                           text="It's your time!")
 
     except Exception as e:
         print(repr(e))
 
 
 bot.polling(non_stop=True)
-
-
-
-
 
 
 
