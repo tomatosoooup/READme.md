@@ -1,10 +1,11 @@
 # Ucan
-**Links**
-[Bot](http://t.me/pyToTest_bot)
+**Links:**
 
-[Youtube](https://youtu.be/DIKqtZG3B2E)
+1. [Bot](http://t.me/pyToTest_bot)
 
-[Site](http://innovations.kh.ua/ucan/)
+2. [Youtube](https://youtu.be/DIKqtZG3B2E)
+
+3. [Site](http://innovations.kh.ua/ucan/)
 
 - Bot was completely rewritten
 
